@@ -1,10 +1,10 @@
 class ToDo {
   String todoMessage;
-  String isCompleted;
+  bool isCompleted;
   int id;
 
   ToDo.fromJson(Map json)
       : todoMessage = json["todo"],
-        isCompleted = json["isCompleted"],
+        isCompleted = json["isCompleted"] == "true",
         id = json["id"] as int;
 }
