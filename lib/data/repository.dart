@@ -24,4 +24,8 @@ class Repository {
 
     return ToDo.fromJson(map);
   }
+
+  Future<bool> deleteTodo(int id) async{
+    return await _networkService.deleteToDo(id);
+  }
 }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toast/toast.dart';
+import 'package:todo_app/cubit/edit_todo_cubit.dart';
 import 'package:todo_app/data/models/todo.dart';
 
 class EditTodosScreen extends StatelessWidget {
@@ -12,20 +15,31 @@ class EditTodosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     _controller.text = toDo.todoMessage;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Edit todo"),
-        actions: [
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.delete),
-            ),
-          )
-        ],
+    return BlocListener<EditTodoCubit, EditTodoState>(
+      listener: (context, state) {
+        if (state is TodoDeleteCompleted) {
+          Navigator.pop(context);
+        } else if (state is TodoDeleteError) {
+          Toast.show(state.error, context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Edit todo"),
+          actions: [
+            InkWell(
+              onTap: () {
+                BlocProvider.of<EditTodoCubit>(context).deleteTodo(toDo);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.delete),
+              ),
+            )
+          ],
+        ),
+        body: _body(context),
       ),
-      body: _body(context),
     );
   }
 
@@ -40,7 +54,9 @@ class EditTodosScreen extends StatelessWidget {
             decoration: InputDecoration(hintText: "Enter todo message"),
           ),
           SizedBox(height: 16),
-          InkWell(onTap: () {}, child: _editToDoButton(context))
+          InkWell(onTap: () {
+            BlocProvider.of<EditTodoCubit>(context).updateToDo(toDo, _controller.text);
+            }, child: _editToDoButton(context))
         ],
       ),
     );
