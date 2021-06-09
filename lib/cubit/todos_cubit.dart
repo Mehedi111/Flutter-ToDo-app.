@@ -50,4 +50,5 @@ class TodosCubit extends Cubit<TodosState> {
       emit(TodosLoaded(todos));
     }
   }
+
 }

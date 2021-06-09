@@ -37,13 +37,12 @@ class EditTodoCubit extends Cubit<EditTodoState> {
 
     //create manual delay
     Timer(Duration(seconds: 3), () {
-      repository.addToDo(text).then((ToDo toDo) {
-        if (toDo != null) {
-          todosCubit.addTodo(toDo);
-          emit(AddTodoCompleted());
-        }
+      toDo.todoMessage = text;
+      repository.updateToDo(toDo);
+      todosCubit.updateToDoList();
+      emit(TodoUpdateCompleted());
       });
-    });
+
   }
 
 }

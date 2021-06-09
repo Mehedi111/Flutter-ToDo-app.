@@ -17,9 +17,12 @@ class EditTodosScreen extends StatelessWidget {
 
     return BlocListener<EditTodoCubit, EditTodoState>(
       listener: (context, state) {
-        if (state is TodoDeleteCompleted) {
+        if (state is TodoDeleteCompleted || state is TodoUpdateCompleted) {
           Navigator.pop(context);
         } else if (state is TodoDeleteError) {
+          Toast.show(state.error, context);
+        }
+        if (state is TodoUpdateError) {
           Toast.show(state.error, context);
         }
       },
@@ -54,9 +57,12 @@ class EditTodosScreen extends StatelessWidget {
             decoration: InputDecoration(hintText: "Enter todo message"),
           ),
           SizedBox(height: 16),
-          InkWell(onTap: () {
-            BlocProvider.of<EditTodoCubit>(context).updateToDo(toDo, _controller.text);
-            }, child: _editToDoButton(context))
+          InkWell(
+              onTap: () {
+                BlocProvider.of<EditTodoCubit>(context)
+                    .updateToDo(toDo, _controller.text);
+              },
+              child: _editToDoButton(context))
         ],
       ),
     );
@@ -68,8 +74,14 @@ class EditTodosScreen extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
           color: Colors.black, borderRadius: BorderRadius.circular(8)),
-      child: Center(
-          child: Text("Update todo", style: TextStyle(color: Colors.white))),
+      child: Center(child: BlocBuilder<EditTodoCubit, EditTodoState>(
+        builder: (context, state) {
+          if (state is TodoUpdating) {
+            return CircularProgressIndicator();
+          }
+          return Text("Update todo", style: TextStyle(color: Colors.white));
+        },
+      )),
     );
   }
 }
